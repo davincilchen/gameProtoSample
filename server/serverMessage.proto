@@ -1,0 +1,86 @@
+syntax = "proto2";
+
+package server;
+//package GameSession;
+
+enum StatusCode {
+   Ok                  = 0;
+   //-----------------------
+   InsufficientBalance = 101;
+   //-----------------------
+   ErrorRequest        = 200;
+   ErrorUser           = 201;
+}
+
+message LoginRequest{
+	oneof User{
+	    group Normal = 1{
+	        required string Token    = 1;
+            required string Platform = 2;
+            required bool   demo     = 3;
+	    }
+	    group Dev = 2{
+    	    required string Id       = 1;
+            required string Password = 2;
+    	    required bool   ForcedEnd  = 3;
+    	}
+	}
+	required string Game = 3;
+}
+
+message GameStartRequest{
+    repeated string GameCommand = 1;
+}
+
+message ResultRequest{
+    repeated string GameCommand = 1;
+}
+
+message GameEndRequest{
+
+}
+
+message ToServer{
+	oneof Message{
+        LoginRequest     LoginRequest     = 1;
+        GameStartRequest GameStartRequest = 2;
+        ResultRequest    ResultRequest    = 3;
+        GameEndRequest   GameEndRequest   = 4;
+    }
+}
+
+message LoginResponse{
+	required StatusCode StatusCode = 1;
+	optional uint64     Balance    = 2;
+	optional string     GameData   = 3;
+}
+
+message GameStartResponse{
+    required StatusCode StatusCode = 1;
+    optional uint64     Balance    = 2;
+}
+
+message ResultResponse{
+    required StatusCode StatusCode = 1;
+    optional string     Result     = 2;
+    optional string     BonusInfo  = 3;
+}
+
+message GameEndResponse{
+    required StatusCode StatusCode = 1;
+    optional uint64     Balance    = 2;
+}
+
+message TimeOut{
+
+}
+
+message ToClient{
+	oneof Message{
+        LoginResponse     LoginResponse     = 1;
+        GameStartResponse GameStartResponse = 2;
+        ResultResponse    ResultResponse    = 3;
+        GameEndResponse   GameEndResponse   = 4;
+        TimeOut           TimeOut           = 5;
+    }
+}
